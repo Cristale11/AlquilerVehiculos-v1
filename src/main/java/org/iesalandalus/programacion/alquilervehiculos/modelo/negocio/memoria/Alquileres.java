@@ -11,18 +11,20 @@ import javax.naming.OperationNotSupportedException;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Alquiler;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Cliente;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Vehiculo;
+import org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.IAlquileres;
+import org.iesalandalus.programacion.alquilervehiculos.modelo.negocio.IClientes;
 
-public class Alquileres {
+public class Alquileres implements IAlquileres {
 	private List<Alquiler> coleccionAlquileres;
 
 	public Alquileres() {
 		coleccionAlquileres = new ArrayList<>();
 	}
-
+	@Override
 	public List<Alquiler> get() {
 		return Collections.unmodifiableList(coleccionAlquileres);
 	}
-
+	@Override
 	public List<Alquiler> get(Cliente cliente) {
 		List<Alquiler> alquileresCliente = new ArrayList<>();
 		for (Alquiler alquiler : coleccionAlquileres) {
@@ -32,7 +34,7 @@ public class Alquileres {
 		}
 		return alquileresCliente;
 	}
-
+	@Override
 	public List<Alquiler> get(Vehiculo vehiculo) {
 		List<Alquiler> alquilerTurismo = new ArrayList<>();
 		for (Alquiler alquiler : coleccionAlquileres) {
@@ -42,11 +44,11 @@ public class Alquileres {
 		}
 		return alquilerTurismo;
 	}
-
+	@Override
 	public int getCantidad() {
 		return coleccionAlquileres.size();
 	}
-
+	@Override
 	public void insertar(Alquiler alquiler) throws OperationNotSupportedException {
 		if (alquiler == null) {
 			throw new NullPointerException("ERROR: No se puede insertar un alquiler nulo.");
@@ -81,7 +83,7 @@ public class Alquileres {
 			}
 		}
 	}
-
+	@Override
 	public void devolver(Cliente cliente, LocalDate fechaDevolucion) throws OperationNotSupportedException {
 		if (cliente == null) {
 			throw new NullPointerException("ERROR: No se puede devolver un alquiler de un cliente nulo.");
@@ -115,7 +117,7 @@ public class Alquileres {
 		}
 		return alquilerTemp;
 	}
-
+	@Override
 	public void devolver(Vehiculo vehiculo, LocalDate fechaDevolucion) throws OperationNotSupportedException {
 		if (vehiculo == null) {
 			throw new NullPointerException("ERROR: No se puede devolver un alquiler de un vehículo nulo.");
@@ -146,7 +148,7 @@ public class Alquileres {
 
 		return alquilerTemp;
 	}
-
+	@Override
 	public void borrar(Alquiler alquiler) throws OperationNotSupportedException {
 		if (alquiler == null) {
 			throw new NullPointerException("ERROR: No se puede borrar un alquiler nulo.");
@@ -155,7 +157,7 @@ public class Alquileres {
 			throw new OperationNotSupportedException("ERROR: No existe ningún alquiler igual.");
 		}
 	}
-
+	@Override
 	public Alquiler buscar(Alquiler alquiler) {
 		if (alquiler == null) {
 			throw new NullPointerException("ERROR: No se puede buscar un alquiler nulo.");
