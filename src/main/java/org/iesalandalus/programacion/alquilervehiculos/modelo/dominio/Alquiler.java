@@ -14,11 +14,11 @@ public class Alquiler {
 	private LocalDate fechaAlquiler;
 	private LocalDate fechaDevolucion;
 	private Cliente cliente;
-	private Turismo turismo;
+	private Vehiculo vehiculo;
 
-	public Alquiler(Cliente cliente, Turismo turismo, LocalDate fechaAlquiler) {
+	public Alquiler(Cliente cliente, Vehiculo vehiculo, LocalDate fechaAlquiler) {
 		setCliente(cliente);
-		setTurismo(turismo);
+		setVehiculo(vehiculo);
 		setFechaAlquiler(fechaAlquiler);
 	}
 
@@ -27,7 +27,7 @@ public class Alquiler {
 			throw new NullPointerException("ERROR: No es posible copiar un alquiler nulo.");
 		}
 		cliente = new Cliente(alquiler.getCliente());
-		turismo = new Turismo(alquiler.getTurismo());
+		vehiculo = Vehiculo.copiar(alquiler.getVehiculo());
 		setFechaAlquiler(alquiler.getFechaAlquiler());
 		setFechaDevolucion(alquiler.getFechaDevolucion());
 	}
@@ -76,15 +76,14 @@ public class Alquiler {
 		this.cliente = cliente;
 	}
 
-	public Vehiculo getTurismo() {
-		return turismo;
+	public Vehiculo getVehiculo() {
+		return vehiculo;
 	}
 
-	private void setTurismo(Turismo turismo) {
-		if (turismo == null) {
-			throw new NullPointerException("ERROR: El turismo no puede ser nulo.");
-		}
-		this.turismo = turismo;
+	private void setVehiculo(Vehiculo vehiculo) {
+		if (vehiculo == null)
+			throw new NullPointerException("ERROR: El vehículo no puede ser nulo.");
+		this.vehiculo = vehiculo;
 	}
 
 	public void devolver(LocalDate fechaDevolucion) throws OperationNotSupportedException { // revisar
@@ -95,21 +94,15 @@ public class Alquiler {
 	}
 
 	public int getPrecio() {
-		int precio = 0;
-		if (this.fechaDevolucion != null) {
-			int factorCilindrada = turismo.getCilindrada() / 10;
-			int calcularNumDias = (int) (ChronoUnit.DAYS.between(fechaAlquiler, fechaDevolucion));
-			precio = (PRECIO_DIA + factorCilindrada) * calcularNumDias;
-
-		} else {
-			precio = 0;
-		}
-		return precio;
+		if (getFechaDevolucion() == null)
+			return 0;
+		return (int) ((PRECIO_DIA + (vehiculo.getFactorPrecio()))
+				* (ChronoUnit.DAYS.between(fechaAlquiler, fechaDevolucion)));
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cliente, fechaAlquiler, fechaDevolucion, turismo);
+		return Objects.hash(PRECIO_DIA, cliente, fechaAlquiler, fechaDevolucion, vehiculo);
 	}
 
 	@Override
@@ -121,25 +114,19 @@ public class Alquiler {
 		if (getClass() != obj.getClass())
 			return false;
 		Alquiler other = (Alquiler) obj;
-		return Objects.equals(cliente, other.cliente) && Objects.equals(fechaAlquiler, other.fechaAlquiler)
-				&& Objects.equals(fechaDevolucion, other.fechaDevolucion) && Objects.equals(turismo, other.turismo);
+		return  Objects.equals(cliente, other.cliente)
+				&& Objects.equals(fechaAlquiler, other.fechaAlquiler)
+				&& Objects.equals(fechaDevolucion, other.fechaDevolucion) && Objects.equals(vehiculo, other.vehiculo);
 	}
 
 	@Override
 	public String toString() {
-		String cadenaFrase = null;
-		if (this.fechaDevolucion == null) {
-
-			cadenaFrase = String.format(
-					"%s <---> %s, %s - %s (%d€)", cliente, turismo,
-					getFechaAlquiler().format(FORMATO_FECHA), "Aún no devuelto", getPrecio());
-
-		} else {
-			cadenaFrase = String.format("%s <---> %s, %s - %s (%d€)", cliente, turismo,
-					getFechaAlquiler().format(FORMATO_FECHA), getFechaDevolucion().format(FORMATO_FECHA), getPrecio());
-		}
-
-		return cadenaFrase;
+		if (getFechaDevolucion() == null)
+			return String.format("%s <---> %s, %s - %s (%d€)", cliente, vehiculo,
+					getFechaAlquiler().format(Alquiler.FORMATO_FECHA), "Aún no devuelto", 0);
+		return String.format("%s <---> %s, %s - %s (%d€)", cliente, vehiculo,
+				getFechaAlquiler().format(Alquiler.FORMATO_FECHA),
+				getFechaDevolucion().format(Alquiler.FORMATO_FECHA), getPrecio());
 	}
 
 }

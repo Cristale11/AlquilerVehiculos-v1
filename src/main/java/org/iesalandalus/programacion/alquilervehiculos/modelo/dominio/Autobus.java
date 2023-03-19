@@ -6,13 +6,15 @@ public class Autobus extends Vehiculo {
 
 	public Autobus(String marca, String modelo, int plazas, String matricula) {
 		super(marca, modelo, matricula);
+		if (plazas < 7 || plazas > 100)
+			throw new IllegalArgumentException("ERROR: Las plazas no son correctas.");
 		setPlazas(plazas);
 	}
 
 	public Autobus(Autobus autobus) {
 		super(autobus);
 		if (autobus == null) {
-			throw new NullPointerException("ERROR: No es posible copiar un turismo nulo.");
+			throw new NullPointerException("ERROR: No es posible copiar un autobus nulo.");
 		}
 		setPlazas(autobus.plazas);
 	}
@@ -32,7 +34,8 @@ public class Autobus extends Vehiculo {
 
 	@Override
 	public String toString() {
-		return String.format("Autobus [plazas=%s]", plazas);
+		return String.format("%s %s (%d plazas) - %s", this.getMarca(), this.getModelo(), this.getPlazas(),
+				this.getMatricula());
 	}
 
 }

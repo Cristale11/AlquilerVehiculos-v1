@@ -1,24 +1,21 @@
 package org.iesalandalus.programacion.alquilervehiculos.modelo.dominio;
 
 public class Furgoneta extends Vehiculo {
-	private static int FACTOR_PMA = 100;
-	private static int FACTOR_PLAZAS = 1;
+	private static final int FACTOR_PMA = 100;
+	private static final int FACTOR_PLAZAS = 1;
 	private int pma;
 	private int plazas;
 
 	public Furgoneta(String marca, String modelo, String matricula, int pma, int plazas) {
 		super(marca, modelo, matricula);
-		this.pma = pma;
-		this.plazas = plazas;
+		setPma(pma);
+		setPlazas(plazas);
 	}
 
 	public Furgoneta(Furgoneta furgoneta) {
 		super(furgoneta);
-		if (furgoneta == null) {
-			throw new NullPointerException("ERROR: No es posible copiar un turismo nulo.");
-		}
-		setPlazas(furgoneta.plazas);
-		setPma(furgoneta.pma);
+		pma = furgoneta.getPma();
+		plazas = furgoneta.getPlazas();
 	}
 
 	public int getPma() {
@@ -26,6 +23,8 @@ public class Furgoneta extends Vehiculo {
 	}
 
 	private void setPma(int pma) {
+		if (pma < 1000 || pma > 10000)
+			throw new IllegalArgumentException("ERROR: El PMA no es correcto.");
 		this.pma = pma;
 	}
 
@@ -34,6 +33,8 @@ public class Furgoneta extends Vehiculo {
 	}
 
 	private void setPlazas(int plazas) {
+		if (plazas < 2 || plazas > 9)
+			throw new IllegalArgumentException("ERROR: Las plazas no son correctas.");
 		this.plazas = plazas;
 	}
 
@@ -45,7 +46,8 @@ public class Furgoneta extends Vehiculo {
 
 	@Override
 	public String toString() {
-		return String.format("Furgoneta [pma=%s, plazas=%s]", pma, plazas);
+		return String.format("%s %s (%d kg, %d plazas) - %s", this.getMarca(), this.getModelo(), this.getPma(),
+				getPlazas(), this.getMatricula());
 	}
 
 }

@@ -1,8 +1,8 @@
 package org.iesalandalus.programacion.alquilervehiculos.modelo.dominio;
 
 public class Turismo extends Vehiculo {
-	private static int FACTOR_CILINDRADA = 10;
-	int cilindrada;
+	private static final int FACTOR_CILINDRADA = 10;
+	private int cilindrada;
 
 	public Turismo(String marca, String modelo, int cilindrada, String matricula) {
 		super(marca, modelo, matricula);

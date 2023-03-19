@@ -1,6 +1,7 @@
 package org.iesalandalus.programacion.alquilervehiculos.modelo.dominio;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public abstract class Vehiculo {
 
@@ -18,19 +19,26 @@ public abstract class Vehiculo {
 
 	protected Vehiculo(Vehiculo vehiculo) {
 		if (vehiculo == null) {
-			throw new NullPointerException("ERROR: No es posible copiar un vehiculo nulo.");
+			throw new NullPointerException("ERROR: No es posible copiar un vehículo nulo.");
 		}
-		this.marca = "Seat";
-		this.modelo = "León";
-		this.matricula = "1234BCD";
+		marca = vehiculo.getMarca();
+		modelo = vehiculo.getModelo();
+		matricula = vehiculo.getMatricula();
 	}
 
 	public static Vehiculo copiar(Vehiculo vehiculo) { // Terminarlo
-		return vehiculo;
+		Vehiculo vehiculoCopia = null;
 
+		if (vehiculo instanceof Turismo turismo)
+			vehiculoCopia = new Turismo(turismo);
+		else if (vehiculo instanceof Autobus bus)
+			vehiculoCopia = new Autobus(bus);
+		else if (vehiculo instanceof Furgoneta furgo)
+			vehiculoCopia = new Furgoneta(furgo);
+		return vehiculoCopia;
 	}
 
-	public static Vehiculo getTurismoConMatricula(String matricula) {
+	public static Vehiculo getVehiculoConMatricula(String matricula) {
 
 		return new Turismo("Seat", "León", 90, matricula);
 
@@ -44,7 +52,7 @@ public abstract class Vehiculo {
 		if (marca == null) {
 			throw new NullPointerException("ERROR: La marca no puede ser nula.");
 		}
-		if (!marca.matches(ER_MARCA)) {
+		if (!Pattern.matches(ER_MARCA, marca)) {
 			throw new IllegalArgumentException("ERROR: La marca no tiene un formato válido.");
 		}
 		this.marca = marca;
@@ -72,7 +80,7 @@ public abstract class Vehiculo {
 		if (matricula == null) {
 			throw new NullPointerException("ERROR: La matrícula no puede ser nula.");
 		}
-		if (!matricula.matches(ER_MATRICULA)) {
+		if (!Pattern.matches(ER_MATRICULA, matricula)) {
 			throw new IllegalArgumentException("ERROR: La matrícula no tiene un formato válido.");
 		}
 		this.matricula = matricula;
@@ -80,13 +88,9 @@ public abstract class Vehiculo {
 
 	public abstract int getFactorPrecio();
 
-	public Vehiculo() {
-		super();
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(marca, matricula, modelo);
+		return Objects.hash(matricula);
 	}
 
 	@Override
@@ -96,8 +100,7 @@ public abstract class Vehiculo {
 		if (!(obj instanceof Vehiculo))
 			return false;
 		Vehiculo other = (Vehiculo) obj;
-		return Objects.equals(marca, other.marca) && Objects.equals(matricula, other.matricula)
-				&& Objects.equals(modelo, other.modelo);
+		return Objects.equals(matricula, other.matricula);
 	}
 
 }
