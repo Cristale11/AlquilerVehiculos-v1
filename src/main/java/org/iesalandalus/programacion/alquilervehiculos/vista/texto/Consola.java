@@ -1,18 +1,22 @@
-package org.iesalandalus.programacion.alquilervehiculos.vista;
+package org.iesalandalus.programacion.alquilervehiculos.vista.texto;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Alquiler;
+import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Autobus;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Cliente;
+import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Furgoneta;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Turismo;
 import org.iesalandalus.programacion.alquilervehiculos.modelo.dominio.Vehiculo;
+import org.iesalandalus.programacion.alquilervehiculos.vista.Opcion;
 import org.iesalandalus.programacion.utilidades.Entrada;
 
 public class Consola {
 
 	private static final String PATRON_FECHA = "dd/MM/yyyy";
+	private static final String PATRON_MES="MM/yyyy";
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern(PATRON_FECHA);
 
 	private Consola() {
@@ -44,7 +48,7 @@ public class Consola {
 		return Entrada.entero();
 	}
 
-	private static LocalDate leerFecha(String mensaje) {
+	private static LocalDate leerFecha(String mensaje, String patronMes) {
 		System.out.print(mensaje);
 		LocalDate fecha = null;
 		try {
@@ -55,12 +59,12 @@ public class Consola {
 		return fecha;
 	}
 
-	public static Opcion elegirOpcion() {
-		int indiceOpcion = 0;
+	public static Accion elegirAcccion() {
+		Accion opcionElegida = null;
 		do {
-			indiceOpcion = leerEntero("Dime una opción: ");
-		} while ((indiceOpcion < 0) && (indiceOpcion > 17));
-		return Opcion.values()[indiceOpcion];
+			opcionElegida = Accion.get(leerEntero("Has elegido: "));
+		}while(opcionElegida==null);
+		return opcionElegida;
 	}
 
 	public static Cliente leerCliente() {
@@ -79,21 +83,54 @@ public class Consola {
 		return leerCadena("Dime un teléfono del cliente: ");
 	}
 
-	public static Vehiculo leerTurismo() {
-		return new Turismo(leerCadena("Dime la marca del turismo: "), leerCadena("Dime el modelo del turismo: "),
-				leerEntero("Dime las cilindradas del turismo: "), leerCadena("Dime la matricula: "));
+	public static Vehiculo leerVehiculo() {
+		mostrarMenuTiposVehiculos();
+		return leerVehiculo(elegirTipoVehiculo());
+		
+	}
+	
+	private static void mostrarMenuTiposVehiculos() {
+		Consola.mostrarCabecera("Tipos:");
+		for(TipoVehiculo tipo:TipoVehiculo.values())
+			System.out.printf("%s%n",tipo);
 	}
 
-	public static Turismo leerTurismoMatricula() {
-		return Turismo.getTurismoConMatricula(leerCadena("Dime una matricula: "));
+	private static TipoVehiculo elegirTipoVehiculo() {
+		return TipoVehiculo.get(leerEntero("Tipo:") - 1);
+		
+	}
+
+
+	public static Vehiculo leerVehiculo(TipoVehiculo tipoVehiculo) {
+		Vehiculo vehiculoSalida = null;
+		String marca = leerCadena("De la marca:");
+		String modelo = leerCadena("Del modelo:");
+		String matricula = leerCadena("Y con matrícula:");
+		
+		if(tipoVehiculo == TipoVehiculo.TURISMO) {
+			vehiculoSalida = new Turismo(marca, modelo, leerEntero("Turismo con cilindrada:"), matricula);
+		}
+		if(tipoVehiculo == TipoVehiculo.FURGONETA) {
+			vehiculoSalida = new Furgoneta(marca, modelo, matricula, leerEntero("Con número de plazas:"), leerEntero("Con Peso Máximo Autorizado:"));
+		}
+		
+		if(tipoVehiculo == TipoVehiculo.AUTOBUS) {
+			vehiculoSalida = new Autobus(marca, modelo, leerEntero("Con número de plazas:"), matricula);
+		}
+		
+		return vehiculoSalida;
 	}
 
 	public static Alquiler leerAlquiler() {
-		return new Alquiler(leerClienteDni(), leerTurismoMatricula(), leerFecha("Dime una fecha de alquiler: "));
+		return new Alquiler(leerClienteDni(), leerVehiculo(), leerFecha("Dime una fecha de alquiler: ", PATRON_FECHA));
 	}
 
 	public static LocalDate leerFechaDevolucion() {
-		return leerFecha("Dime una fecha de devolucion: ");
+		return leerFecha("Dime una fecha de devolucion: ", PATRON_FECHA);
+	}
+	public static LocalDate leerMes() {
+		return leerFecha("Fecha mes:", PATRON_MES);
+		
 	}
 
 }
